@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.156
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EncryptDecriptPassConsole", "EncryptDecriptPassConsole\EncryptDecriptPassConsole.csproj", "{DFD90072-AE89-41B7-9B7F-130A1A123F02}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EncryptDecrypLib", "EncryptDecrypLib\EncryptDecrypLib.csproj", "{F185E899-DE95-438A-8E78-1F89F32A1E06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EncryptDescript.Core", "EncryptDescript.Core\EncryptDescript.Core.csproj", "{E0275B7B-BB0B-45F5-AD8A-8A0EEEDB83E8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DFD90072-AE89-41B7-9B7F-130A1A123F02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFD90072-AE89-41B7-9B7F-130A1A123F02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFD90072-AE89-41B7-9B7F-130A1A123F02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFD90072-AE89-41B7-9B7F-130A1A123F02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F185E899-DE95-438A-8E78-1F89F32A1E06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F185E899-DE95-438A-8E78-1F89F32A1E06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F185E899-DE95-438A-8E78-1F89F32A1E06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F185E899-DE95-438A-8E78-1F89F32A1E06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0275B7B-BB0B-45F5-AD8A-8A0EEEDB83E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0275B7B-BB0B-45F5-AD8A-8A0EEEDB83E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0275B7B-BB0B-45F5-AD8A-8A0EEEDB83E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0275B7B-BB0B-45F5-AD8A-8A0EEEDB83E8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FC178AEC-47F1-4CB1-A844-FAE526A3B8FB}
+	EndGlobalSection
+EndGlobal
