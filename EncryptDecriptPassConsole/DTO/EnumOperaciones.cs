@@ -11,6 +11,7 @@ namespace EncryptDecriptPassConsole.DTO
         EliminarPassword = 3,
         GuardarCambiosFinalizar = 4,
         VerCaracteresValidos = 5,
-        Terminar = 6
+        Terminar = 6,
+        GenerarArchivoDesencriptado = 7
     }
 }

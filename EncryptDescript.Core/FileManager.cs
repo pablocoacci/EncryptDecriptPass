@@ -12,15 +12,11 @@ namespace EncryptDescript.Core
     public class FileManager
     {
         private readonly IEncrypterDecrypter _encryperDecryper;
-        private readonly string _encryptPassword;
-        private readonly string _jsonPassFilePath;
         private List<PassEntity> _passEntityList = new List<PassEntity>();
 
-        public FileManager(IEncrypterDecrypter encryperDecryper, string encryptPassword, string jsonPassFilePath)
+        public FileManager(IEncrypterDecrypter encryperDecryper)
         {
             _encryperDecryper = encryperDecryper;
-            _encryptPassword = encryptPassword;
-            _jsonPassFilePath = jsonPassFilePath;
         }
 
         #region Public Methods
@@ -48,22 +44,42 @@ namespace EncryptDescript.Core
             return errorDesc;
         }
 
-        public void EliminarPass(string cuenta)
+        public ErrorDescription EliminarPass(string cuenta)
         {
             var passEntity = _passEntityList.Where(p => p.Cuenta == cuenta).FirstOrDefault();
-            EliminarPassFromList(passEntity);
+
+            try
+            {
+                EliminarPassFromList(passEntity);
+            }
+            catch (Exception ex)
+            {
+                return new ErrorDescription(true, "Ocurrio un error al eliminar el password. " + ex.Message);
+            }
+
+            return new ErrorDescription(false);
         }
 
-        public void EliminarPass(int id)
+        public ErrorDescription EliminarPass(int id)
         {
             var passEntity = _passEntityList.Where(p => p.Id == id).FirstOrDefault();
-            EliminarPassFromList(passEntity);
+            
+            try
+            {
+                EliminarPassFromList(passEntity);
+            }
+            catch(Exception ex)
+            {
+                return new ErrorDescription(true, "Ocurrio un error al eliminar el password. " + ex.Message);
+            }
+
+            return new ErrorDescription(false);
         }
 
-        public async Task<ErrorDescription> SavePassEntitiesToFileAsync()
+        public async Task<ErrorDescription> SavePassEntitiesToFileAsync(string jsonPassFilePath, string usuario, string encryptPassword)
         {
             var encryptTasks = _passEntityList.Where(p => !p.IsEncrypter)
-                .Select(p => p.EncryptPassEntityAsync(_encryperDecryper, _encryptPassword)).ToArray();
+                .Select(p => p.EncryptPassEntityAsync(_encryperDecryper, encryptPassword)).ToArray();
 
             Task.WaitAll(encryptTasks);
 
@@ -74,12 +90,13 @@ namespace EncryptDescript.Core
 
             try
             {
-                //TODO: falta verificar y crear la carpeta contenedora
+                Directory.CreateDirectory(jsonPassFilePath);
 
-                if (File.Exists(_jsonPassFilePath))
-                    File.Delete(_jsonPassFilePath);
+                string fullPath = jsonPassFilePath + usuario + "_Pass.txt";
+                if (File.Exists(fullPath))
+                    File.Delete(fullPath);
 
-                using (StreamWriter sw = File.CreateText(_jsonPassFilePath))
+                using (StreamWriter sw = File.CreateText(fullPath))
                     await sw.WriteLineAsync(passEntitiesJson);
             }
             catch (Exception ex)
@@ -90,20 +107,21 @@ namespace EncryptDescript.Core
             return new ErrorDescription(false);
         }
 
-        public async Task<ErrorDescription> LoadJsonPassEntitiesFileAsync(string usuario)
+        public async Task<ErrorDescription> LoadJsonPassEntitiesFileAsync(string jsonPassFilePath, string usuario, string encryptPassword)
         {
             string passEntitiesJson = "";
             
             try
             {
-                if (!File.Exists(_jsonPassFilePath))
+                string fullPath = jsonPassFilePath + usuario + "_Pass.txt";
+                if (!File.Exists(fullPath))
                 {
-                    var errorDesc = await SavePassEntitiesToFileAsync();
+                    var errorDesc = await SavePassEntitiesToFileAsync(jsonPassFilePath, usuario, encryptPassword);
                     if (errorDesc.IsError)
                         throw new Exception("Ocurrio un error al generar el Json de las pass entities. " + errorDesc.Descripcion);
                 }
 
-                using (StreamReader sr = File.OpenText(_jsonPassFilePath))
+                using (StreamReader sr = File.OpenText(fullPath))
                     passEntitiesJson = await sr.ReadToEndAsync();
             }
             catch (Exception ex)
@@ -113,8 +131,7 @@ namespace EncryptDescript.Core
 
             _passEntityList = JsonConvert.DeserializeObject<List<PassEntity>>(passEntitiesJson);
 
-            var encryptTasks = _passEntityList.Where(p => p.Usuario == usuario)
-                .Select(p => p.DescryptPassEntity(_encryperDecryper, _encryptPassword)).ToArray();
+            var encryptTasks = _passEntityList.Select(p => p.DescryptPassEntity(_encryperDecryper, encryptPassword)).ToArray();
 
             Task.WaitAll(encryptTasks);
 
@@ -124,6 +141,36 @@ namespace EncryptDescript.Core
         public List<PassEntity> GetPassEntitiesForUser(string user)
         {
             return _passEntityList.Where(p => p.Usuario == user).ToList();
+        }
+
+        public char[] GetValidCharacters()
+        {
+            return _encryperDecryper.GetValidCharacters();
+        }
+
+        public async Task<ErrorDescription> GenerarArchivoDescencriptado(string destinyPath, string usuario)
+        {
+            try
+            {
+                Directory.CreateDirectory(destinyPath);
+                string fullPath = destinyPath + usuario + "_Pass.csv";
+
+                if (File.Exists(fullPath))
+                    File.Delete(fullPath);
+
+                using (StreamWriter sw = File.CreateText(fullPath))
+                {
+                    await sw.WriteLineAsync("Descripcion,Cuenta,Password,Preg Secreta,Rta Secreta, Mail Contacto");
+                    foreach (var pas in _passEntityList)
+                        await sw.WriteLineAsync(pas.Descripcion + "," + pas.Cuenta + "," + pas.PassWord + "," + pas.PreguntaSecreta + "," + pas.RespuestaSecreta + "," + pas.MailContacto);
+                }
+            }
+            catch(Exception ex)
+            {
+                return new ErrorDescription(true, "Ocurrio un error al generar el archivo. " + ex.Message);
+            }
+
+            return new ErrorDescription(false);
         }
 
         #endregion

@@ -17,6 +17,9 @@ namespace EncryptDecriptPassConsole
 
         static void Main(string[] args)
         {
+            var configuration = GetConfiguration();
+            var jsonPathPassEntities = configuration.GetValue<string>("appConsoleConfig:passEntitiesFilePath");
+
             ShowMsgColorConsole("Ingrese al usuario");
             var usuario = Console.ReadLine();
 
@@ -26,22 +29,22 @@ namespace EncryptDecriptPassConsole
             var serviceProvider = ConfigureServices(passEncriptDecript, usuario);
 
             fileManager = serviceProvider.GetRequiredService<FileManager>();
-            var errorDesc = fileManager.LoadJsonPassEntitiesFileAsync(usuario).Result;
+            var errorDesc = fileManager.LoadJsonPassEntitiesFileAsync(jsonPathPassEntities, usuario, passEncriptDecript).Result;
 
             while (true)
             {
-                var operation = ShowPrincipalMenu(usuario);
+                var operation = ShowPrincipalMenu();
 
                 switch (operation)
                 {
                     case EnumOperaciones.CrearNuevaPassword:
-                        CrearNuevaPass();
+                        CrearNuevaPass(usuario);
                         break;
                     case EnumOperaciones.EliminarPassword:
                         EliminarPass();
                         break;
                     case EnumOperaciones.GuardarCambiosFinalizar:
-                        GuardarCambios(usuario);
+                        GuardarCambios(jsonPathPassEntities, usuario, passEncriptDecript);
                         break;
                     case EnumOperaciones.VerListaPasswords:
                         VerListaPass(usuario);
@@ -51,12 +54,15 @@ namespace EncryptDecriptPassConsole
                         break;
                     case EnumOperaciones.Terminar:
                         return;
+                    case EnumOperaciones.GenerarArchivoDesencriptado:
+                        GenerarArchivoDescencriptado(usuario);
+                        break;
                 }
             }
 
         }
 
-        private static ServiceProvider ConfigureServices(string passEncryptDescrypt, string usuario)
+        private static IConfiguration GetConfiguration()
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -64,57 +70,87 @@ namespace EncryptDecriptPassConsole
 
             IConfiguration configuration = builder.Build();
 
-            var jsonPathPassEntities = configuration.GetValue<string>("appConsoleConfig:passEntitiesFilePath") + usuario + "_Pass.txt";
+            return configuration;
+        }
 
+        private static ServiceProvider ConfigureServices(string passEncryptDescrypt, string usuario)
+        {
             var services = new ServiceCollection();
 
             services.AddSingleton<IEncrypterDecrypter, EncrypterVigenere>();
-            services.AddSingleton<FileManager>(provider => new FileManager(provider.GetRequiredService<IEncrypterDecrypter>(), passEncryptDescrypt, jsonPathPassEntities));
+            services.AddSingleton<FileManager>(provider => new FileManager(provider.GetRequiredService<IEncrypterDecrypter>()));
 
             return services.BuildServiceProvider();
         }
 
-        private static EnumOperaciones ShowPrincipalMenu(string usuario)
+        private static EnumOperaciones ShowPrincipalMenu()
         {
+            Console.WriteLine("");
             ShowMsgColorConsole("Que desea realizar:");
-            ShowMsgColorConsole("Ingrese 1: Visualizar todas las passwords para el usuario " + usuario);
-            ShowMsgColorConsole("Ingrese 2: Crear una nueva password para el usuario " + usuario);
-            ShowMsgColorConsole("Ingrese 3: Eleminar una password del usuario " + usuario);
-            ShowMsgColorConsole("Ingrese 4: Guardar los cambios realizados y finalizar");
+            ShowMsgColorConsole("Ingrese 1: Visualizar todas las passwords");
+            ShowMsgColorConsole("Ingrese 2: Crear una nueva password");
+            ShowMsgColorConsole("Ingrese 3: Eleminar una password");
+            ShowMsgColorConsole("Ingrese 4: Guardar los cambios realizados");
             ShowMsgColorConsole("Ingrese 5: Ver caracteres validos");
             ShowMsgColorConsole("Ingrese 6: Terminar ejecucion");
+            ShowMsgColorConsole("Ingrese 7: Generar archivo de las passwords descencriptado");
 
             int.TryParse(Console.ReadLine(), out int operation);
 
-            if (operation == 0 || operation > 6)
+            if (operation == 0 || operation > 7)
             {
                 ShowMsgColorConsole("La operacion no es valida", ConsoleColor.Red);
-                operation = (int)ShowPrincipalMenu(usuario);
+                operation = (int)ShowPrincipalMenu();
             }
 
             return (EnumOperaciones)operation;
         }
 
-        private static void CrearNuevaPass()
+        private static void CrearNuevaPass(string usuario)
         {
+            ShowMsgColorConsole("Ingrese una descripcion del sitio");
+            string desc = Console.ReadLine();
+            ShowMsgColorConsole("Ingrese el nombre de la cuenta/usuario del sitio");
+            string cuenta = Console.ReadLine();
+            ShowMsgColorConsole("Ingrese la contraseña del sitio");
+            string pass = Console.ReadLine();
+            ShowMsgColorConsole("Ingrese la pregunta secreta confiurada en el sitio");
+            string pregSecreta = Console.ReadLine();
+            ShowMsgColorConsole("Ingrese la respuesta secreta del sitio");
+            string rtaSecreta = Console.ReadLine();
+            ShowMsgColorConsole("Ingrese mail de contacto");
+            string mail = Console.ReadLine();
 
+            fileManager.CrearNuevaPass(usuario, desc, cuenta, pass, pregSecreta, rtaSecreta, mail);
+
+            ShowMsgColorConsole("La password se ha creado exitosamente");
         }
 
         private static void EliminarPass()
         {
+            ShowMsgColorConsole("Ingrese el Id de la pass que desea eliminar");
+            string idstr = Console.ReadLine();
+            int.TryParse(idstr, out int id);
 
+            if (id == 0)
+                ShowMsgColorConsole("El id ingresado no es valido", ConsoleColor.Red);
+
+            var descError = fileManager.EliminarPass(id);
+
+            if(descError.IsError)
+                ShowMsgColorConsole(descError.Descripcion, ConsoleColor.Red);
         }
 
-        private static void GuardarCambios(string usuario)
+        private static void GuardarCambios(string jsonPathFile, string usuario, string passEncryptDecrypt)
         {
-            var result = fileManager.SavePassEntitiesToFileAsync().Result;
+            var result = fileManager.SavePassEntitiesToFileAsync(jsonPathFile, usuario, passEncryptDecrypt).Result;
 
             if (result.IsError)
                 ShowMsgColorConsole("Ocurrio un error al guardar los cambios. " + result.Descripcion, ConsoleColor.Red);
             else
                 Console.WriteLine("Los cambios se guardaron correctamente");
 
-            result = fileManager.LoadJsonPassEntitiesFileAsync(usuario).Result;
+            result = fileManager.LoadJsonPassEntitiesFileAsync(jsonPathFile, usuario, passEncryptDecrypt).Result;
         }
 
         private static void VerListaPass(string usuario)
@@ -138,7 +174,20 @@ namespace EncryptDecriptPassConsole
 
         private static void VerCaracteresValidos()
         {
+            char[] characters = fileManager.GetValidCharacters();
+            Console.WriteLine(string.Join(",", characters));
+        }
 
+        private static void GenerarArchivoDescencriptado(string usuario)
+        {
+            ShowMsgColorConsole(@"Ingrese el path donde desea generar el archivo. Ej: C:\carpeta1\carpeta2\");
+            string path = Console.ReadLine();
+            var errorDesc = fileManager.GenerarArchivoDescencriptado(path, usuario).Result;
+
+            if (errorDesc.IsError)
+                ShowMsgColorConsole(errorDesc.Descripcion, ConsoleColor.Red);
+            else
+                ShowMsgColorConsole("El archivo se genero exitosamente");
         }
 
         private static void ShowMsgColorConsole(string msg, ConsoleColor colorText = ConsoleColor.Green)
