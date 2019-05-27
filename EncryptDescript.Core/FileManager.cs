@@ -74,6 +74,8 @@ namespace EncryptDescript.Core
 
             try
             {
+                //TODO: falta verificar y crear la carpeta contenedora
+
                 if (File.Exists(_jsonPassFilePath))
                     File.Delete(_jsonPassFilePath);
 

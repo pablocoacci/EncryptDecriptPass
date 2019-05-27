@@ -17,10 +17,10 @@ namespace EncryptDecriptPassConsole
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Ingrese al usuario");
+            ShowMsgColorConsole("Ingrese al usuario");
             var usuario = Console.ReadLine();
 
-            Console.WriteLine("Ingrese la password para Encriptar-Descencriptar el archivo");
+            ShowMsgColorConsole("Ingrese la password para Encriptar-Descencriptar el archivo");
             var passEncriptDecript = Console.ReadLine();
 
             var serviceProvider = ConfigureServices(passEncriptDecript, usuario);
@@ -64,8 +64,6 @@ namespace EncryptDecriptPassConsole
 
             IConfiguration configuration = builder.Build();
 
-            //Console.WriteLine(configuration.GetConnectionString("Matrix"));
-
             var jsonPathPassEntities = configuration.GetValue<string>("appConsoleConfig:passEntitiesFilePath") + usuario + "_Pass.txt";
 
             var services = new ServiceCollection();
@@ -78,19 +76,19 @@ namespace EncryptDecriptPassConsole
 
         private static EnumOperaciones ShowPrincipalMenu(string usuario)
         {
-            Console.WriteLine("Que desea realizar:");
-            Console.WriteLine("Ingrese 1: Visualizar todas las passwords para el usuario " + usuario);
-            Console.WriteLine("Ingrese 2: Crear una nueva password para el usuario " + usuario);
-            Console.WriteLine("Ingrese 3: Eleminar una password del usuario " + usuario);
-            Console.WriteLine("Ingrese 4: Guardar los cambios realizados y finalizar");
-            Console.WriteLine("Ingrese 5: Ver caracteres validos");
-            Console.WriteLine("Ingrese 6: Terminar ejecucion");
+            ShowMsgColorConsole("Que desea realizar:");
+            ShowMsgColorConsole("Ingrese 1: Visualizar todas las passwords para el usuario " + usuario);
+            ShowMsgColorConsole("Ingrese 2: Crear una nueva password para el usuario " + usuario);
+            ShowMsgColorConsole("Ingrese 3: Eleminar una password del usuario " + usuario);
+            ShowMsgColorConsole("Ingrese 4: Guardar los cambios realizados y finalizar");
+            ShowMsgColorConsole("Ingrese 5: Ver caracteres validos");
+            ShowMsgColorConsole("Ingrese 6: Terminar ejecucion");
 
             int.TryParse(Console.ReadLine(), out int operation);
 
             if (operation == 0 || operation > 6)
             {
-                Console.WriteLine("La operacion no es valida");
+                ShowMsgColorConsole("La operacion no es valida", ConsoleColor.Red);
                 operation = (int)ShowPrincipalMenu(usuario);
             }
 
@@ -112,7 +110,7 @@ namespace EncryptDecriptPassConsole
             var result = fileManager.SavePassEntitiesToFileAsync().Result;
 
             if (result.IsError)
-                Console.WriteLine("Ocurrio un error al guardar los cambios. " + result.Descripcion);
+                ShowMsgColorConsole("Ocurrio un error al guardar los cambios. " + result.Descripcion, ConsoleColor.Red);
             else
                 Console.WriteLine("Los cambios se guardaron correctamente");
 
@@ -123,7 +121,7 @@ namespace EncryptDecriptPassConsole
         {
             var listaPassEntities = fileManager.GetPassEntitiesForUser(usuario);
 
-            Console.WriteLine("Lista de passwords para el usuario " + usuario);
+            ShowMsgColorConsole("Lista de passwords para el usuario " + usuario);
 
             foreach (var pass in listaPassEntities)
             {
@@ -142,5 +140,13 @@ namespace EncryptDecriptPassConsole
         {
 
         }
+
+        private static void ShowMsgColorConsole(string msg, ConsoleColor colorText = ConsoleColor.Green)
+        {
+            Console.ForegroundColor = colorText;
+            Console.WriteLine(msg);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
     }
 }
