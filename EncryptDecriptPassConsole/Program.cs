@@ -155,7 +155,7 @@ namespace EncryptDecriptPassConsole
 
         private static void VerListaPass(string usuario)
         {
-            var listaPassEntities = fileManager.GetPassEntitiesForUser(usuario);
+            var listaPassEntities = fileManager.GetPassEntitiesForUser();
 
             ShowMsgColorConsole("Lista de passwords para el usuario " + usuario);
 

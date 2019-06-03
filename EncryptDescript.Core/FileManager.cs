@@ -138,9 +138,9 @@ namespace EncryptDescript.Core
             return new ErrorDescription(false);
         }
 
-        public List<PassEntity> GetPassEntitiesForUser(string user)
+        public List<PassEntity> GetPassEntitiesForUser()
         {
-            return _passEntityList.Where(p => p.Usuario == user).ToList();
+            return _passEntityList;
         }
 
         public char[] GetValidCharacters()
