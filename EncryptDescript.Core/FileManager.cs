@@ -21,7 +21,7 @@ namespace EncryptDescript.Core
 
         #region Public Methods
 
-        public ErrorDescription CrearNuevaPass(string usuario, string descipcion, string cuenta, string pass, string pregSecreta, string rtaSecreta, string mailContacto)
+        public ErrorDescription CrearNuevaPass(string usuario, string descipcion, string sitio, string cuenta, string pass, string pregSecreta, string rtaSecreta, string mailContacto)
         {
             var nuevaPass = new PassEntity()
             {
@@ -29,6 +29,7 @@ namespace EncryptDescript.Core
                 IsEncrypter = false,
                 Usuario = usuario,
                 Descripcion = descipcion,
+                Sitio = sitio,
                 Cuenta = cuenta,
                 PassWord = pass,
                 PreguntaSecreta = pregSecreta,
@@ -107,7 +108,7 @@ namespace EncryptDescript.Core
             return new ErrorDescription(false);
         }
 
-        public async Task<ErrorDescription> LoadJsonPassEntitiesFileAsync(string jsonPassFilePath, string usuario, string encryptPassword)
+        public async Task<ErrorDescription> LoadJsonPassEntitiesFileAsync(string jsonPassFilePath, string usuario, string encryptPassword, bool decryptPassEntities)
         {
             string passEntitiesJson = "";
             
@@ -131,9 +132,11 @@ namespace EncryptDescript.Core
 
             _passEntityList = JsonConvert.DeserializeObject<List<PassEntity>>(passEntitiesJson);
 
-            var encryptTasks = _passEntityList.Select(p => p.DescryptPassEntity(_encryperDecryper, encryptPassword)).ToArray();
-
-            Task.WaitAll(encryptTasks);
+            if (decryptPassEntities)
+            {
+                var encryptTasks = _passEntityList.Select(p => p.DescryptPassEntity(_encryperDecryper, encryptPassword)).ToArray();
+                Task.WaitAll(encryptTasks);
+            }
 
             return new ErrorDescription(false);
         }

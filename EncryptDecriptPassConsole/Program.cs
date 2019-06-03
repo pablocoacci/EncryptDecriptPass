@@ -29,7 +29,7 @@ namespace EncryptDecriptPassConsole
             var serviceProvider = ConfigureServices(passEncriptDecript, usuario);
 
             fileManager = serviceProvider.GetRequiredService<FileManager>();
-            var errorDesc = fileManager.LoadJsonPassEntitiesFileAsync(jsonPathPassEntities, usuario, passEncriptDecript).Result;
+            var errorDesc = fileManager.LoadJsonPassEntitiesFileAsync(jsonPathPassEntities, usuario, passEncriptDecript, true).Result;
 
             while (true)
             {
@@ -110,6 +110,8 @@ namespace EncryptDecriptPassConsole
         {
             ShowMsgColorConsole("Ingrese una descripcion del sitio");
             string desc = Console.ReadLine();
+            ShowMsgColorConsole("Ingrese el sitio");
+            string sitio = Console.ReadLine();
             ShowMsgColorConsole("Ingrese el nombre de la cuenta/usuario del sitio");
             string cuenta = Console.ReadLine();
             ShowMsgColorConsole("Ingrese la contraseña del sitio");
@@ -121,7 +123,7 @@ namespace EncryptDecriptPassConsole
             ShowMsgColorConsole("Ingrese mail de contacto");
             string mail = Console.ReadLine();
 
-            fileManager.CrearNuevaPass(usuario, desc, cuenta, pass, pregSecreta, rtaSecreta, mail);
+            fileManager.CrearNuevaPass(usuario, desc, sitio, cuenta, pass, pregSecreta, rtaSecreta, mail);
 
             ShowMsgColorConsole("La password se ha creado exitosamente");
         }
@@ -150,7 +152,7 @@ namespace EncryptDecriptPassConsole
             else
                 Console.WriteLine("Los cambios se guardaron correctamente");
 
-            result = fileManager.LoadJsonPassEntitiesFileAsync(jsonPathFile, usuario, passEncryptDecrypt).Result;
+            result = fileManager.LoadJsonPassEntitiesFileAsync(jsonPathFile, usuario, passEncryptDecrypt, true).Result;
         }
 
         private static void VerListaPass(string usuario)
@@ -163,6 +165,7 @@ namespace EncryptDecriptPassConsole
             {
                 Console.WriteLine("Id: " + pass.Id);
                 Console.WriteLine("Descripccion: " + pass.Descripcion);
+                Console.WriteLine("Sitio: " + pass.Sitio);
                 Console.WriteLine("Cuenta: " + pass.Cuenta);
                 Console.WriteLine("Password: " + pass.PassWord);
                 Console.WriteLine("Pregunta Secreta: " + pass.PreguntaSecreta);

@@ -10,6 +10,7 @@ namespace EncryptDescript.Core.DTO
         public int Id { get; set; }
         public string Usuario { get; set; }
         public string Descripcion { get; set; }
+        public string Sitio { get; set; }
         public string Cuenta { get; set; }
         public string PassWord { get; set; }
         public string PreguntaSecreta { get; set; }
@@ -24,7 +25,6 @@ namespace EncryptDescript.Core.DTO
             await Task.Run(() =>
             {
                 IsEncrypter = true;
-                Descripcion = encrypterDecrypter.EncryptarCadena(Descripcion, passWordEncryptDecrypt);
                 Cuenta = encrypterDecrypter.EncryptarCadena(Cuenta, passWordEncryptDecrypt);
                 PassWord = encrypterDecrypter.EncryptarCadena(PassWord, passWordEncryptDecrypt);
                 PreguntaSecreta = encrypterDecrypter.EncryptarCadena(PreguntaSecreta, passWordEncryptDecrypt);
@@ -38,7 +38,6 @@ namespace EncryptDescript.Core.DTO
             await Task.Run(() =>
             {
                 IsEncrypter = false;
-                Descripcion = encrypterDecrypter.DecryptarCadena(Descripcion, passWordEncryptDecrypt);
                 Cuenta = encrypterDecrypter.DecryptarCadena(Cuenta, passWordEncryptDecrypt);
                 PassWord = encrypterDecrypter.DecryptarCadena(PassWord, passWordEncryptDecrypt);
                 PreguntaSecreta = encrypterDecrypter.DecryptarCadena(PreguntaSecreta, passWordEncryptDecrypt);
@@ -53,8 +52,11 @@ namespace EncryptDescript.Core.DTO
             if (string.IsNullOrEmpty(Usuario))
                 return new ErrorDescription(true, "El usuario no puede ser vacio");
 
-            if (string.IsNullOrEmpty(Descripcion) || IsStringValidEncrypt(Descripcion, encrypterDecrypter))
+            if (string.IsNullOrEmpty(Descripcion))
                 return new ErrorDescription(true, "La descripcion es vacia o tiene caracteres invalidos");
+
+            if (string.IsNullOrEmpty(Sitio))
+                return new ErrorDescription(true, "El destino es un no puede ser vacio");
 
             if (string.IsNullOrEmpty(Cuenta) || IsStringValidEncrypt(Cuenta, encrypterDecrypter))
                 return new ErrorDescription(true, "La cuenta es vacia o tiene caracteres invalidos");
