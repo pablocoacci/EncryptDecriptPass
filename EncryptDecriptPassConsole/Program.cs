@@ -2,6 +2,7 @@
 using EncryptDecrypLib;
 using EncryptDecrypLib.Encrypters;
 using EncryptDescript.Core;
+using EncryptDescript.Core.DTO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -29,7 +30,11 @@ namespace EncryptDecriptPassConsole
             var serviceProvider = ConfigureServices(passEncriptDecript, usuario);
 
             fileManager = serviceProvider.GetRequiredService<FileManager>();
-            var errorDesc = fileManager.LoadJsonPassEntitiesFileAsync(jsonPathPassEntities, usuario, passEncriptDecript, true).Result;
+            var errorDescLoad = fileManager.LoadJsonPassEntitiesFileAsync(jsonPathPassEntities, usuario, passEncriptDecript, true).Result;
+            var errorDescPassOk = fileManager.IsEncryptDecryptPassOk(passEncriptDecript);
+
+            if (ShowErroDescByConsole(errorDescLoad) || ShowErroDescByConsole(errorDescPassOk))
+                return;
 
             while (true)
             {
@@ -60,6 +65,17 @@ namespace EncryptDecriptPassConsole
                 }
             }
 
+        }
+
+        private static bool ShowErroDescByConsole(ErrorDescription errorDesc)
+        {
+            if (errorDesc.IsError)
+            {
+                ShowMsgColorConsole(errorDesc.Descripcion, ConsoleColor.Red);
+                return true;
+            }
+
+            return false;
         }
 
         private static IConfiguration GetConfiguration()

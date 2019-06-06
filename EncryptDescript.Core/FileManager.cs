@@ -176,6 +176,14 @@ namespace EncryptDescript.Core
             return new ErrorDescription(false);
         }
 
+        public ErrorDescription IsEncryptDecryptPassOk(string encryptPassword)
+        {
+            if (!_passEntityList.Any())
+                return new ErrorDescription(false);
+
+            return _passEntityList.FirstOrDefault().IsEncryptDecryptPassOk(_encryperDecryper, encryptPassword);
+        }
+
         #endregion
 
         #region Private Methods

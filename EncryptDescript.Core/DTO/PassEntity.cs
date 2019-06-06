@@ -8,6 +8,7 @@ namespace EncryptDescript.Core.DTO
     public class PassEntity
     {
         public int Id { get; set; }
+        public string EncryptDecryptPass { get; set; }
         public string Usuario { get; set; }
         public string Descripcion { get; set; }
         public string Sitio { get; set; }
@@ -25,6 +26,7 @@ namespace EncryptDescript.Core.DTO
             await Task.Run(() =>
             {
                 IsEncrypter = true;
+                EncryptDecryptPass = encrypterDecrypter.EncryptarCadena(passWordEncryptDecrypt, passWordEncryptDecrypt);
                 Cuenta = encrypterDecrypter.EncryptarCadena(Cuenta, passWordEncryptDecrypt);
                 PassWord = encrypterDecrypter.EncryptarCadena(PassWord, passWordEncryptDecrypt);
                 PreguntaSecreta = encrypterDecrypter.EncryptarCadena(PreguntaSecreta, passWordEncryptDecrypt);
@@ -38,6 +40,7 @@ namespace EncryptDescript.Core.DTO
             await Task.Run(() =>
             {
                 IsEncrypter = false;
+                EncryptDecryptPass = encrypterDecrypter.DecryptarCadena(EncryptDecryptPass, passWordEncryptDecrypt);
                 Cuenta = encrypterDecrypter.DecryptarCadena(Cuenta, passWordEncryptDecrypt);
                 PassWord = encrypterDecrypter.DecryptarCadena(PassWord, passWordEncryptDecrypt);
                 PreguntaSecreta = encrypterDecrypter.DecryptarCadena(PreguntaSecreta, passWordEncryptDecrypt);
@@ -74,6 +77,21 @@ namespace EncryptDescript.Core.DTO
                 return new ErrorDescription(true, "El mail tiene caracteres invalidos");
 
             return new ErrorDescription(false);
+        }
+
+        public ErrorDescription IsEncryptDecryptPassOk(IEncrypterDecrypter encrypterDecrypter, string passWordEncryptDecrypt)
+        {
+            string passToCompare = passWordEncryptDecrypt;
+            if(IsEncrypter)
+                passToCompare = encrypterDecrypter.EncryptarCadena(passWordEncryptDecrypt, passWordEncryptDecrypt);
+
+            ErrorDescription errorDesc;
+            if (EncryptDecryptPass == passToCompare)
+                errorDesc = new ErrorDescription(false);
+            else
+                errorDesc = new ErrorDescription(true, "Las password para encryptar no es correcta");
+
+            return errorDesc;
         }
 
         #endregion
