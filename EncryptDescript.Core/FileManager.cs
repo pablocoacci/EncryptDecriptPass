@@ -184,6 +184,20 @@ namespace EncryptDescript.Core
             return _passEntityList.FirstOrDefault().IsEncryptDecryptPassOk(_encryperDecryper, encryptPassword);
         }
 
+        public ErrorDescription IsValidUserName(string jsonPassFilePath, string userName)
+        {
+            DirectoryInfo d = new DirectoryInfo(jsonPassFilePath);//Assuming Test is your Folder
+            //FileInfo[] Files = d.GetFiles("*.txt"); //Getting Text files
+            var filesNames = d.GetFiles("*.txt").Select(f => f.Name.Replace("_Pass.txt",""));
+            var existUser = filesNames.Where(n => n == userName).Any();
+
+            ErrorDescription errorDesc = new ErrorDescription(false);
+            if (existUser)
+                errorDesc = new ErrorDescription(true, "El nombre de usuario ya existe");
+
+            return errorDesc;
+        }
+
         #endregion
 
         #region Private Methods
