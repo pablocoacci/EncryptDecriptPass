@@ -15,9 +15,7 @@ export class NavHorizontalMenu {
   password = '';
   httpClient: HttpClient;
   urlService: string;
-
-  public forecasts: ErrorDescription;
-
+  
   constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
     this.httpClient = http;
     this.urlService = baseUrl;
