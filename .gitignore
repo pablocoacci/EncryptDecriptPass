@@ -349,3 +349,5 @@ healthchecksdb
 
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
+/EncryptDecriptPassWebAngular/ClientApp/src/app/common-scripts/ErrorDescriptionInterface.js
+/EncryptDecriptPassWebAngular/ClientApp/src/app/common-scripts/ErrorDescriptionInterface.js.map
