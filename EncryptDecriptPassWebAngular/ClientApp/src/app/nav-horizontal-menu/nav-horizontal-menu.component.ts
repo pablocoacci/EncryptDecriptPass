@@ -8,11 +8,14 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./nav-horizontal-menu.component.css']
 })
 export class NavHorizontalMenu {
-  //usuarioNombre: string;
+  showUser: boolean = false;
+
   usuarioNombre = '';
   password = '';
   httpClient: HttpClient;
   urlService: string;
+
+  public forecasts: ErrorDescription;
 
   constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
     this.httpClient = http;
@@ -20,15 +23,24 @@ export class NavHorizontalMenu {
   }
 
   public LoginUser() {
-    //alert('hola que tal');
+    var urlTest = this.urlService + 'api/DecryptEncrypt/LoginUser'
 
-    //alert(this.usuarioNombre + ' ' + this.password);
+    this.httpClient.post<ErrorDescription>(urlTest, { UserName: this.usuarioNombre, Password: this.password }).subscribe(result => {
 
-    var urlTest = this.urlService +'api/DecryptEncrypt/LoginUser'
+      if (!result.isError) {
+        this.showUser = true;
+      }
+      else {
+        alert(result.descripcion);
+      }
 
-    this.httpClient.post(urlTest, { UserName: this.usuarioNombre, Password: this.password }).subscribe(result => {
-      alert(result);
+
     }, error => console.error(error));
-    
+
   }
+}
+
+interface ErrorDescription {
+  isError: boolean;
+  descripcion: string;
 }

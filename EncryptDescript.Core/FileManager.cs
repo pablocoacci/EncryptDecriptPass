@@ -108,6 +108,16 @@ namespace EncryptDescript.Core
             return new ErrorDescription(false);
         }
 
+        /// <summary>
+        /// Dada una ruta, un nombre de usuario y una password este metodo carga el json de las passwords desencriptadas dentro del field privado _passEntityList.
+        /// En caso de que el archivo json no exista, este metodo lo crea.
+        /// Luego para obtener una lista de las passwords de usuario se debe de utilizar el metodo GetPassEntitiesForUser()
+        /// </summary>
+        /// <param name="jsonPassFilePath"></param>
+        /// <param name="usuario"></param>
+        /// <param name="encryptPassword"></param>
+        /// <param name="decryptPassEntities"></param>
+        /// <returns></returns>
         public async Task<ErrorDescription> LoadJsonPassEntitiesFileAsync(string jsonPassFilePath, string usuario, string encryptPassword, bool decryptPassEntities)
         {
             string passEntitiesJson = "";
@@ -146,6 +156,10 @@ namespace EncryptDescript.Core
             return _passEntityList;
         }
 
+        /// <summary>
+        /// Retorna una lista de caracteres validos que pueden ser utilizados por el usuario para crear passwords
+        /// </summary>
+        /// <returns></returns>
         public char[] GetValidCharacters()
         {
             return _encryperDecryper.GetValidCharacters();
@@ -192,7 +206,7 @@ namespace EncryptDescript.Core
             var existUser = filesNames.Where(n => n == userName).Any();
 
             ErrorDescription errorDesc = new ErrorDescription(false);
-            if (existUser)
+            if (!existUser)
                 errorDesc = new ErrorDescription(true, "El nombre de usuario ya existe");
 
             return errorDesc;

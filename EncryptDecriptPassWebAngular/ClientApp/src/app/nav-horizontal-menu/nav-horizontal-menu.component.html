@@ -9,9 +9,12 @@
       </li>
     </ul>
   </div>
-  <div class="form-inline">
+  <div class="form-inline" *ngIf="!showUser">
     <input class="form-control mr-sm-2" type="text" placeholder="Usuario" [(ngModel)]="usuarioNombre">
     <input class="form-control mr-sm-2" type="search" placeholder="Password" [(ngModel)]="password">
     <button class="btn btn-outline-info my-2 my-sm-0" type="submit" (click)="LoginUser()">Login</button>
+  </div>
+  <div class="form-inline" *ngIf="showUser">
+    <button class="btn btn-outline-info my-2 my-sm-0" type="submit">{{ usuarioNombre }} - Cerrar Sesion</button>
   </div>
 </nav>

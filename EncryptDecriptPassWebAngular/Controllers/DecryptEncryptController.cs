@@ -16,14 +16,17 @@ namespace EncryptDecriptPassWebAngular.Controllers
     [Route("api/[controller]")]
     public class DecryptEncryptController : Controller
     {
-        private readonly string _passEntitiesFilePath = @"C:\\TestProjects\\EncryptDecript\\PassUserPasswords\\";
+        private readonly string _passEntitiesFilePath = @"C:\TestProjects\EncryptDecript\PassUserPasswords\";
 
         [HttpPost("[action]")]
         public JsonResult LoginUser([FromBody] RquestTest rq)
         {
             EncryptDecrypLib.IEncrypterDecrypter ed = new EncryptDecrypLib.Encrypters.EncrypterVigenere();
             FileManager fileManager = new FileManager(ed);
-            var errorDescLoad = fileManager.LoadJsonPassEntitiesFileAsync(_passEntitiesFilePath, rq.UserName, rq.Password, true).Result;
+            //var errorDescLoad = fileManager.LoadJsonPassEntitiesFileAsync(_passEntitiesFilePath, rq.UserName, rq.Password, true).Result;
+
+            //Se verifica que el usuario exista
+            var errorDescLoad = fileManager.IsValidUserName(_passEntitiesFilePath, rq.UserName);
 
             return Json(errorDescLoad);
         }
