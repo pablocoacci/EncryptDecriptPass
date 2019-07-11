@@ -31,6 +31,8 @@
 
   <ItemGroup>
     <None Remove=".gitignore" />
+    <None Remove="ClientApp\src\app\common-scripts\ErrorDescriptionInterface.js" />
+    <None Remove="ClientApp\src\app\common-scripts\ErrorDescriptionInterface.js.map" />
     <None Remove="ClientApp\src\app\common-scripts\ErrorDescriptionInterface.ts" />
   </ItemGroup>
 

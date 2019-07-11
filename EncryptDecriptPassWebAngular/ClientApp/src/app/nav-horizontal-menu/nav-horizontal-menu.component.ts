@@ -1,6 +1,7 @@
 
 import { Component, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { ErrorDescription } from '../common-scripts/ErrorDescriptionInterface';
 
 @Component({
   selector: 'app-nav-horizontal-menu',
@@ -38,9 +39,4 @@ export class NavHorizontalMenu {
     }, error => console.error(error));
 
   }
-}
-
-interface ErrorDescription {
-  isError: boolean;
-  descripcion: string;
 }
