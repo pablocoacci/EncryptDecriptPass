@@ -201,7 +201,7 @@ namespace EncryptDecriptPassConsole
         {
             ShowMsgColorConsole(@"Ingrese el path donde desea generar el archivo. Ej: C:\carpeta1\carpeta2\");
             string path = Console.ReadLine();
-            var errorDesc = fileManager.GenerarArchivoDescencriptado(path, usuario).Result;
+            var errorDesc = fileManager.GenerarArchivoDescencriptadoAsync(path, usuario).Result;
 
             if (errorDesc.IsError)
                 ShowMsgColorConsole(errorDesc.Descripcion, ConsoleColor.Red);

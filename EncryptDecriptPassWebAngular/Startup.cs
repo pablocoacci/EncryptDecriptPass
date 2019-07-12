@@ -20,6 +20,18 @@ namespace EncryptDecriptPassWebAngular
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            #region HttpContext.Session Configuration
+
+            services.AddDistributedMemoryCache();
+            services.AddSession(options => {
+                options.IdleTimeout = System.TimeSpan.FromSeconds(3600);//la sessiones duran 3600 seg = 1 hora
+                options.Cookie.HttpOnly = true;
+                // Make the session cookie essential
+                options.Cookie.IsEssential = true;
+            });
+
+            #endregion
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // In production, the Angular files will be served from this directory
@@ -45,6 +57,10 @@ namespace EncryptDecriptPassWebAngular
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            //Necesario para utiliazr HttpContext.Session
+            app.UseSession();
+            
             app.UseSpaStaticFiles();
 
             app.UseMvc(routes =>

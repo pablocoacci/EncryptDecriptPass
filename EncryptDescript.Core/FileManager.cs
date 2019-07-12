@@ -113,10 +113,10 @@ namespace EncryptDescript.Core
         /// En caso de que el archivo json no exista, este metodo lo crea.
         /// Luego para obtener una lista de las passwords de usuario se debe de utilizar el metodo GetPassEntitiesForUser()
         /// </summary>
-        /// <param name="jsonPassFilePath"></param>
-        /// <param name="usuario"></param>
-        /// <param name="encryptPassword"></param>
-        /// <param name="decryptPassEntities"></param>
+        /// <param name="jsonPassFilePath">path al archivo al archivo json donde estan/deberian estar las passwords entities</param>
+        /// <param name="usuario">usuario propietario de las passwords entities</param>
+        /// <param name="encryptPassword">password utilizada para encryptar/descencryptar las passwords</param>
+        /// <param name="decryptPassEntities">true: descencripta todas las passwords entities existentes en el json</param>
         /// <returns></returns>
         public async Task<ErrorDescription> LoadJsonPassEntitiesFileAsync(string jsonPassFilePath, string usuario, string encryptPassword, bool decryptPassEntities)
         {
@@ -165,7 +165,7 @@ namespace EncryptDescript.Core
             return _encryperDecryper.GetValidCharacters();
         }
 
-        public async Task<ErrorDescription> GenerarArchivoDescencriptado(string destinyPath, string usuario)
+        public async Task<ErrorDescription> GenerarArchivoDescencriptadoAsync(string destinyPath, string usuario)
         {
             try
             {
@@ -198,10 +198,15 @@ namespace EncryptDescript.Core
             return _passEntityList.FirstOrDefault().IsEncryptDecryptPassOk(_encryperDecryper, encryptPassword);
         }
 
+        /// <summary>
+        /// Valida si existe un json con las passwords entities que pertenezca al usuario dado
+        /// </summary>
+        /// <param name="jsonPassFilePath"></param>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         public ErrorDescription IsValidUserName(string jsonPassFilePath, string userName)
         {
-            DirectoryInfo d = new DirectoryInfo(jsonPassFilePath);//Assuming Test is your Folder
-            //FileInfo[] Files = d.GetFiles("*.txt"); //Getting Text files
+            DirectoryInfo d = new DirectoryInfo(jsonPassFilePath);
             var filesNames = d.GetFiles("*.txt").Select(f => f.Name.Replace("_Pass.txt",""));
             var existUser = filesNames.Where(n => n == userName).Any();
 
@@ -210,6 +215,20 @@ namespace EncryptDescript.Core
                 errorDesc = new ErrorDescription(true, "El nombre de usuario ya existe");
 
             return errorDesc;
+        }
+
+        /// <summary>
+        /// Valida si existe un json con las passwords entities que pertenezca al usuario dado. Corre asyncronicamente
+        /// </summary>
+        /// <param name="jsonPassFilePath"></param>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        public async Task<ErrorDescription> IsValidUserNameAsync(string jsonPassFilePath, string userName)
+        {
+            return await Task.Run(()=>
+            {
+                return IsValidUserName(jsonPassFilePath, userName);
+            });
         }
 
         #endregion
