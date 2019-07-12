@@ -35,6 +35,10 @@
     <None Remove="ClientApp\src\app\common-scripts\ErrorDescriptionInterface.js" />
     <None Remove="ClientApp\src\app\common-scripts\ErrorDescriptionInterface.js.map" />
     <None Remove="ClientApp\src\app\common-scripts\ErrorDescriptionInterface.ts" />
+    <None Remove="ClientApp\src\app\common-scripts\PassEntityInterface.js" />
+    <None Remove="ClientApp\src\app\common-scripts\PassEntityInterface.js.map" />
+    <None Remove="ClientApp\src\app\common-scripts\PassEntityInterface.ts" />
+    <None Remove="ClientApp\src\app\passentities-list\passentities-list.component.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +47,8 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\common-scripts\ErrorDescriptionInterface.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\common-scripts\PassEntityInterface.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\passentities-list\passentities-list.component.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
