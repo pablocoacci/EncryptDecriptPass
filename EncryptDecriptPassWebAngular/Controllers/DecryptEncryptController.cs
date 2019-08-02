@@ -13,18 +13,15 @@ namespace EncryptDecriptPassWebAngular.Controllers
     [Route("api/[controller]")]
     public class DecryptEncryptController : Controller
     {
-        private const string _fileManagerKey = "_fileManager";
+        //private const string _fileManagerKey = "_fileManager";
         private const string _userNamerKey = "_userName";
         private const string _userPasswordKey = "_userPass";
-
-        private readonly string _passEntitiesFilePath = @"C:\TestProjects\EncryptDecript\PassUserPasswords\";
+        
+        private readonly string _passEntitiesFilePath = @"C:\TestProjects\EncryptDecriptPass\PassUserPasswords\";
         
         [HttpPost("[action]")]
         public async Task<JsonResult> LoginUser([FromBody] LogginRequest rq)
         {
-            //HttpContext.Session.SetString("_Name", "Jarvik");
-            //var pp = HttpContext.Session.GetString("_Name");
-            
             EncryptDecrypLib.IEncrypterDecrypter ed = new EncryptDecrypLib.Encrypters.EncrypterVigenere();
             FileManager fileManager = new FileManager(ed);
 
@@ -35,9 +32,10 @@ namespace EncryptDecriptPassWebAngular.Controllers
             {
                 //Se cargan las pass entities y se guardan en variables de session
                 errorDescLoad = await fileManager.LoadJsonPassEntitiesFileAsync(_passEntitiesFilePath, rq.UserName, rq.Password, false);
-                HttpContext.Session.Set<FileManager>(_fileManagerKey, fileManager);
+                //HttpContext.Session.Set<FileManager>(_fileManagerKey, fileManager);
                 HttpContext.Session.SetString(_userNamerKey, rq.UserName);
                 HttpContext.Session.SetString(_userPasswordKey, rq.Password);
+                FileManagersWarehouse.InsertFileManagerInWarehouse(rq.UserName, rq.Password, fileManager);
             }
 
             return Json(errorDescLoad);
@@ -46,9 +44,11 @@ namespace EncryptDecriptPassWebAngular.Controllers
         [HttpGet("[action]")]
         public JsonResult GetPasswordsEntities()
         {
-            var fileManager = HttpContext.Session.Get<FileManager>(_fileManagerKey);
+            //var fileManager = HttpContext.Session.Get<FileManager>(_fileManagerKey);
+            var fileManager = FileManagersWarehouse.GetFileManager(HttpContext.Session.GetString(_userNamerKey), HttpContext.Session.GetString(_userPasswordKey));
             var passEntitiesList = fileManager.GetPassEntitiesForUser();
             return Json(passEntitiesList);
         }
+       
     }
 }

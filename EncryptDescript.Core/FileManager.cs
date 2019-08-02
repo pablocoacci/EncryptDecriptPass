@@ -13,7 +13,7 @@ namespace EncryptDescript.Core
     {
         private readonly IEncrypterDecrypter _encryperDecryper;
         private List<PassEntity> _passEntityList = new List<PassEntity>();
-
+        
         public FileManager(IEncrypterDecrypter encryperDecryper)
         {
             _encryperDecryper = encryperDecryper;
