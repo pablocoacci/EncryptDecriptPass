@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using EncryptDecriptPassWebAngular.DTO.DecryptEncrypt;
 using EncryptDecriptPassWebAngular.WebHelpers;
 using EncryptDescript.Core;
+using EncryptDescript.Core.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,13 +43,12 @@ namespace EncryptDecriptPassWebAngular.Controllers
         }
         
         [HttpGet("[action]")]
-        public JsonResult GetPasswordsEntities()
+        public IEnumerable<PassEntity> GetPasswordsEntities()
         {
             //var fileManager = HttpContext.Session.Get<FileManager>(_fileManagerKey);
             var fileManager = FileManagersWarehouse.GetFileManager(HttpContext.Session.GetString(_userNamerKey), HttpContext.Session.GetString(_userPasswordKey));
             var passEntitiesList = fileManager.GetPassEntitiesForUser();
-            return Json(passEntitiesList);
+            return passEntitiesList;
         }
-       
     }
 }

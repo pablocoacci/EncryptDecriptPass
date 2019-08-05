@@ -16,15 +16,15 @@ export class PassEntitiesListComponent {
 }
 
 interface PassEntities {
-  //id: number;
-  //encryptDecryptPass: string;
-  //usuario: string;
-  //descripcion: string;
-  //sitio: string;
-  //cuenta: string;
-  //passWord: string;
-  //preguntaSecreta: string;
-  //respuestaSecreta: string;
-  //mailContacto: string;
-  //isEncrypter: boolean;
+  id: number;
+  encryptDecryptPass: string;
+  usuario: string;
+  descripcion: string;
+  sitio: string;
+  cuenta: string;
+  passWord: string;
+  preguntaSecreta: string;
+  respuestaSecreta: string;
+  mailContacto: string;
+  isEncrypter: boolean;
 }
